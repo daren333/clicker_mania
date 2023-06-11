@@ -1,22 +1,11 @@
 import json
+import uuid
 from datetime import datetime, date
-
-
-class PetEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Pet):
-            return {
-                'name': obj.name,
-                'birthdate': obj.dob.strftime('%m/%d/%Y'),
-                'gender': obj.gender,
-                'creation_timestamp': obj.creation_timestamp.strftime('%m/%d/%Y %H:%M:%S'),
-                'age': obj.age
-            }
-        return super().default(obj)
 
 
 class Pet:
     def __init__(self, name: str, dob: str, gender: str):
+        self.uuid = uuid.uuid4()
         self.name = name
         self.dob = datetime.strptime(dob, '%m/%d/%Y').date()
         self.gender = gender
@@ -29,3 +18,15 @@ class Pet:
         return age.days // 365
 
 
+class PetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Pet):
+            return {
+                'uuid': obj.uuid,
+                'name': obj.name,
+                'birthdate': obj.dob.strftime('%m/%d/%Y'),
+                'gender': obj.gender,
+                'creation_timestamp': obj.creation_timestamp.strftime('%m/%d/%Y %H:%M:%S'),
+                'age': obj.age
+            }
+        return super().default(obj)
