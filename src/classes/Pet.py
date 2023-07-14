@@ -17,6 +17,17 @@ class Pet:
         age = creation_timestamp.date() - birthdate
         return age.days // 365
 
+    def update(self, data: dict):
+        if data.get("name"):
+            self.name = data.get("name")
+        if data.get("dob"):
+            self._update_dob(new_dob=data.get("dob"))
+        if data.get("gender"):
+            self.gender = data.get("gender")
+
+    def _update_dob(self, new_dob):
+        self.dob = datetime.strptime(new_dob, '%m/%d/%Y').date()
+        self.age = self._calculate_age(birthdate=new_dob, creation_timestamp=datetime.now())
 
 class PetEncoder(json.JSONEncoder):
     def default(self, obj):
