@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from src.services.pets_service import create_pet, get_all_pets, delete_pet, update_pet
+from src.services.pets_service import create_pet, get_all_pets, delete_pet, update_pet, get_pet
 
 pets_blueprint = Blueprint('pets', __name__)
 
@@ -16,6 +16,10 @@ def api_add_pet():
     data = request.get_json()
     pet = create_pet(data.get('name'), data.get('dob'), data.get('gender'))
     return jsonify({'message': 'Pet created successfully', 'pet': pet})
+
+@pets_blueprint.route('/pets/<string:pet_id>', methods=['GET'])
+def api_get_pet(pet_id):
+    return jsonify(get_pet(pet_id))
 
 
 @pets_blueprint.route('/pets', methods=['GET'])
