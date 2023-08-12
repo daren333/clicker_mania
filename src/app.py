@@ -1,5 +1,6 @@
 import logging
 
+import pymysql
 from flask import Flask
 import os
 from src.routes.pets_api import pets_blueprint

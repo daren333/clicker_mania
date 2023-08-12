@@ -26,12 +26,12 @@ def get_pet(pet_id: str):
 def get_all_pets():
     """Get all pets"""
     return [json.dumps(pet, cls=PetEncoder) for pet in pets_db_service.get_all_pets()]
-    #return [json.dumps(pet, cls=PetEncoder) for pet in pets]
 
 
 def update_pet(pet_id, data):
     """Upsert pet"""
-    pet = pets[pet_id]
+    pet = get_pet(pet_id=pet_id)
+
     pet.update(data) if pet else None
 
 

@@ -3,7 +3,7 @@ import pathlib
 import uuid
 from typing import List
 
-from flask import jsonify
+from flask import jsonify, current_app
 
 from src.classes.Pet import Pet, PetEncoder, PetDecoder
 
@@ -13,16 +13,12 @@ pet_ids = []
 
 
 def get_pet(pet_id : str):
+    current_app.config.get("db_connection")
     if pet_id not in get_id_list():
         raise FileNotFoundError(f"id: {pet_id} Not found")
 
     with open(f"{DB_FILEPATH}/{pet_id}.json", "r") as f:
         return json.loads(f.read(), cls=PetDecoder)
-
-
-#     for pet_id in pet_ids:
-#         with open(f"{DB_FILEPATH}/{pet_id}.json", "r") as f:
-#             json.dumps(pet, cls=PetEncoder)
 
 
 def create_pet(pet : Pet):
@@ -45,6 +41,8 @@ def get_id_list():
 
 
 def get_all_pets():
+    conn = current_app.config.get("db_connection")
+
     pets = []
 
     for pet_id in get_id_list():
