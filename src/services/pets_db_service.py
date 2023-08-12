@@ -3,6 +3,7 @@ import pathlib
 import uuid
 from typing import List
 
+import pymysql
 from flask import jsonify, current_app
 
 from src.classes.Pet import Pet, PetEncoder, PetDecoder
@@ -12,8 +13,14 @@ DB_FILEPATH = pathlib.Path(__file__).parent.parent / "temp_dbs"
 pet_ids = []
 
 
+def get_db_connection(db_config):
+    connection = pymysql.connect(**db_config)
+    return connection
+
+
 def get_pet(pet_id : str):
-    current_app.config.get("db_connection")
+    get_db_connection(current_app.config.get("db_config"))
+
     if pet_id not in get_id_list():
         raise FileNotFoundError(f"id: {pet_id} Not found")
 
@@ -41,8 +48,6 @@ def get_id_list():
 
 
 def get_all_pets():
-    conn = current_app.config.get("db_connection")
-
     pets = []
 
     for pet_id in get_id_list():

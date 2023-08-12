@@ -1,11 +1,6 @@
 import pymysql
 
 
-def get_db_connection(db_config):
-    connection = pymysql.connect(**db_config)
-    return connection
-
-
 class DefaultConfig(object):
     DEBUG = False
     PORT = 5000
@@ -16,7 +11,6 @@ class DefaultConfig(object):
         'password': 'mysecretpassword',  # The password you set when starting the container
         #'db': 'mydatabase',  # Change this to your database name
     }
-    db_connection = get_db_connection(db_config=db_config)
 
 
 class DevelopmentConfig(DefaultConfig):
