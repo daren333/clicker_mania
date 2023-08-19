@@ -5,7 +5,7 @@ from datetime import datetime, date
 
 class Pet:
     def __init__(self, name: str, dob: str, gender: str, uuid=None, creation_timestamp=None, age=None, total_clicks=None):
-        self.uuid = str(uuid4()) if not uuid else uuid
+        self.pet_id = str(uuid4()) if not uuid else uuid
         self.name = name
         self.dob = datetime.strptime(dob, '%m/%d/%Y').date() #if not dob else dob
         self.gender = gender
@@ -35,7 +35,7 @@ class PetEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Pet):
             return {
-                'uuid': obj.uuid,
+                'pet_id': obj.pet_id,
                 'name': obj.name,
                 'birthdate': obj.dob.strftime('%m/%d/%Y'),
                 'gender': obj.gender,
@@ -51,7 +51,7 @@ class PetDecoder(json.JSONDecoder):
         super().__init__(object_hook=self._decode_pet, *args, **kwargs)
 
     def _decode_pet(self, obj):
-        if 'uuid' in obj and 'name' in obj and 'birthdate' in obj and 'gender' in obj and 'creation_timestamp' in obj and 'age' in obj:
+        if 'pet_id' in obj and 'name' in obj and 'birthdate' in obj and 'gender' in obj and 'creation_timestamp' in obj and 'age' in obj:
             # Convert birthdate and creation_timestamp back to datetime objects
             obj['dob'] = obj['birthdate'] #datetime.strptime(obj['birthdate'], '%m/%d/%Y').date()
             #obj['creation_timestamp'] = datetime.strptime(obj['creation_timestamp'], '%m/%d/%Y %H:%M:%S').date()

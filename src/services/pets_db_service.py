@@ -29,10 +29,10 @@ def get_pet(pet_id : str):
 
 
 def create_pet(pet : Pet):
-    with open(f"{DB_FILEPATH}/{pet.uuid}.json", "w+") as f:
+    with open(f"{DB_FILEPATH}/{pet.pet_id}.json", "w+") as f:
         f.write(json.dumps(pet, cls=PetEncoder))
 
-    add_id_to_id_list(get_id_list(), pet.uuid)
+    add_id_to_id_list(get_id_list(), pet.pet_id)
 
 
 def add_id_to_id_list(id_list: list, pet_id: str):

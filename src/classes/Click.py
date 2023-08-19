@@ -12,11 +12,21 @@ class TreatLikelihood(Enum):
 
 class Click:
 
-    def __init__(self, pet_id, likelihood):
+    def __init__(self, pet_id, likelihood, trick):
         self.timestamp = datetime.now()
         self.treat_likelihood = TreatLikelihood(likelihood)
         self.pet_id = pet_id
         self.treated = self.determine_if_treating(self.treat_likelihood)
+        self.trick_id = self.convert_trick_to_trick_id(trick)
+
+    def convert_trick_to_trick_id(self, trick):
+        tricks = {
+            "sit": 1,
+            "down": 2,
+            "custom": 3
+        }
+
+        return tricks.get(trick)
 
     def determine_if_treating(self, treat_likelihood: TreatLikelihood) -> bool:
         match treat_likelihood:
