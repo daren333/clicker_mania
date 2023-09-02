@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from src.services.pets_service import create_pet, get_all_pets, delete_pet, update_pet, get_pet
+from src.services.business_logic_services.pets_business_service import create_pet, get_all_pets, delete_pet, update_pet, get_pet
 
 pets_blueprint = Blueprint('pets', __name__)
 

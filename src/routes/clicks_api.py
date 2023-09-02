@@ -15,5 +15,5 @@ def health():
 def click():
     """Register a new click"""
     data = request.get_json()
-    click = Click(data.get("pet_id"), data.get("treat_likelihood"))
+    click = Click(pet_id=data.get("pet_id"), likelihood=data.get("treat_likelihood"), trick_id=data.get("trick_id"))
     return jsonify({'message': f'New click at {click.timestamp}. Treated: {click.treated}'})

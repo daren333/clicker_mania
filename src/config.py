@@ -1,4 +1,3 @@
-import pymysql
 from os import environ as env
 
 
@@ -6,11 +5,11 @@ class DefaultConfig(object):
     DEBUG = False
     PORT = 5000
     db_config = {
-        'host': 'localhost',  # Change this to the IP of your MySQL container if needed
+        'host': '127.0.0.1',  # Change this to the IP of your MySQL container if needed
         'port': 3306,
         'user': 'root',
         'password': 'mysecretpassword',  # The password you set when starting the container
-        #'db': 'mydatabase',  # Change this to your database name
+        'db': 'clicker_mania',  # Change this to your database name
     }
 
 
@@ -31,14 +30,19 @@ mysql_db = env.get("MYSQL_DB", "clicker_mania")
 
 
 sql_table_configs = {
+    "tricks_table": ("CREATE TABLE IF NOT EXISTS `tricks_table` ("
+                     "`trick_id` INT AUTO_INCREMENT PRIMARY KEY,"
+                     "`trick_name` VARCHAR(255) NOT NULL"
+                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"),
+
     "pet_table": ("CREATE TABLE IF NOT EXISTS `pets_table` ("
-                          "  `pet_id` INT AUTO_INCREMENT PRIMARY KEY,"
-                          "  `name` VARCHAR(255) NOT NULL,"
-                          "  `dob` DATE NOT NULL,"
-                          "  `gender` VARCHAR(10) NOT NULL,"
-                          "  `creation_timestamp` TIMESTAMP NOT NULL,"
-                          "  `age` INT NOT NULL,"
-                          "  `total_clicks` INT NOT NULL,"
+                          "`pet_id` INT AUTO_INCREMENT PRIMARY KEY,"
+                          "`name` VARCHAR(255) NOT NULL,"
+                          "`dob` DATE NOT NULL,"
+                          "`gender` VARCHAR(10) NOT NULL,"
+                          "`creation_timestamp` TIMESTAMP NOT NULL,"
+                          "`age` INT NOT NULL,"
+                          "`total_clicks` INT NOT NULL"
                           ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"),
 
     "clicks_table": ("CREATE TABLE IF NOT EXISTS `clicks_table` ("
@@ -48,12 +52,7 @@ sql_table_configs = {
                           "  `pet_id` INT NOT NULL,"
                           "  `treated` BOOLEAN NOT NULL,"
                           "  `trick_id` INT NOT NULL,"
-                          "  FOREIGN KEY (`pet_id`) REFERENCES Pet (`pet_id`)"
-                          "  FOREIGN KEY (`trick_id`) REFERENCES Trick (`trick_id`)"  
-                          ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"),
-
-    "tricks_table": ("CREATE TABLE IF NOT EXISTS `tricks_table` ("
-                     "  `trick_id` INT AUTO_INCREMENT PRIMARY KEY,"
-                     "  `trick_name` VARCHAR(255) NOT NULL,"
-                     ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"),
+                          "  FOREIGN KEY (`pet_id`) REFERENCES pets_table (`pet_id`),"
+                          "  FOREIGN KEY (`trick_id`) REFERENCES tricks_table (`trick_id`)"  
+                          ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin")
 }

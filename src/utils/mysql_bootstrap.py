@@ -2,7 +2,6 @@ from src import config
 import mysql.connector
 from mysql.connector import errorcode
 from sqlalchemy import create_engine
-import src.config
 
 
 def connect_to_db():

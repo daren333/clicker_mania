@@ -1,4 +1,4 @@
-name: clickermania
+name: clicker_mania
 
 dependencies:
   - python ==3.11.*
@@ -6,3 +6,4 @@ dependencies:
   - pymysql == 1.0.2
   - mysql
   - sqlalchemy
+  - mysql-connector-python

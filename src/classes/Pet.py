@@ -3,6 +3,12 @@ from uuid import uuid4
 from datetime import datetime, date
 
 
+def calculate_age(birthdate, creation_timestamp):
+    birthdate = datetime.strptime(birthdate, '%m/%d/%Y').date()
+    age = creation_timestamp.date() - birthdate
+    return age.days // 365
+
+
 class Pet:
     def __init__(self, name: str, dob: str, gender: str, uuid=None, creation_timestamp=None, age=None, total_clicks=None):
         self.pet_id = str(uuid4()) if not uuid else uuid
@@ -10,13 +16,8 @@ class Pet:
         self.dob = datetime.strptime(dob, '%m/%d/%Y').date() #if not dob else dob
         self.gender = gender
         self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
-        self.age = self._calculate_age(dob, self.creation_timestamp) if not age else age
+        self.age = _calculate_age(dob, self.creation_timestamp) if not age else age
         self.total_clicks = 0 if not total_clicks else total_clicks
-
-    def _calculate_age(self, birthdate, creation_timestamp):
-        birthdate = datetime.strptime(birthdate, '%m/%d/%Y').date()
-        age = creation_timestamp.date() - birthdate
-        return age.days // 365
 
     def update(self, data: dict):
         if data.get("name"):
@@ -28,7 +29,7 @@ class Pet:
 
     def _update_dob(self, new_dob):
         self.dob = datetime.strptime(new_dob, '%m/%d/%Y').date()
-        self.age = self._calculate_age(birthdate=new_dob, creation_timestamp=datetime.now())
+        self.age = _calculate_age(birthdate=new_dob, creation_timestamp=datetime.now())
 
 
 class PetEncoder(json.JSONEncoder):
