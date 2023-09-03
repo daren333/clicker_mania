@@ -1,7 +1,7 @@
 from src import config
 import mysql.connector
 from mysql.connector import errorcode
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 
 def connect_to_db():
@@ -30,13 +30,13 @@ def create_database(engine, db_name):
     connection = engine.connect()
     try:
         connection.execute(
-            "CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARACTER SET 'utf8'".format(db_name))
+            text("CREATE DATABASE IF NOT EXISTS {} DEFAULT CHARACTER SET 'utf8'".format(db_name)))
     except mysql.connector.Error as err:
         print("Failed creating database: {}".format(err))
         exit(1)
 
     try:
-        connection.execute("USE {}".format(db_name))
+        connection.execute(text("USE {}".format(db_name)))
     except mysql.connector.Error as err:
         print("Database {} does not exists.".format(db_name))
         if err.errno == errorcode.ER_BAD_DB_ERROR:
@@ -49,12 +49,12 @@ def create_database(engine, db_name):
 
 def create_sql_tables(engine):
     cursor = engine.connect()
-    cursor.execute("USE %s" % config.mysql_db)
+    cursor.execute(text("USE %s" % config.mysql_db))
 
     for table in config.sql_table_configs.keys():
         try:
             print("Creating table {}: ".format(table), end='')
-            cursor.execute(config.sql_table_configs[table])
+            cursor.execute(text(config.sql_table_configs[table]))
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                 print("already exists.")

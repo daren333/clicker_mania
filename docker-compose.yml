@@ -20,7 +20,7 @@ services:
 
 
   mysql:
-    image: mysql
+    image: mysql:latest
     restart: always
     ports:
       - 3306:3306

@@ -6,6 +6,7 @@ from errno import errorcode
 # import pymysql
 import mysql.connector
 from flask import jsonify, current_app
+from sqlalchemy import create_engine, text
 
 from src import config
 from src.classes.Pet import PetDecoder
@@ -18,24 +19,11 @@ pet_ids = []
 
 
 def connect_to_db():
-    try:
-        cnx = mysql.connector.connect(user=config.mysql_user,
-                                      password=config.mysql_pw,
-                                      host=config.mysql_host,
-                                      port=config.mysql_port)
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print("Something is wrong with your user name or password")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            print("Database does not exist")
-        else:
-            print(err)
-    else:
-        return cnx
-
-def get_db_connection(db_config):
-    #print(current_app.config.get("db_config"))
-    return mysql.connector.connect(**db_config).cursor()
+    engine = create_engine(
+        "mysql+pymysql://" + config.mysql_user + ":" + config.mysql_pw + "@" + config.mysql_host)
+    cursor = engine.connect()
+    cursor.execute(text("USE %s" % config.mysql_db))
+    return cursor
 
 
 #db_cursor = get_db_connection(db_config=current_app.get("db_config"))
@@ -52,29 +40,29 @@ def get_pet(pet_id: str):
 
 def create_pet(pet):
 
-    db_cursor = connect_to_db().cursor()
+    db_cursor = connect_to_db()
 
     try:
-        insert_query = (
+        insert_query = text(
             "INSERT INTO pets_table (name, dob, gender, creation_timestamp, age, total_clicks) "
-            "VALUES (%s, %s, %s, %s, %s, %s)"
+            "VALUES (:name, :dob, :gender, :creation_timestamp, :age, :total_clicks)"
         )
-        pet_data = (
-            pet.name,
-            pet.dob.strftime('%Y-%m-%d'),  # Convert to MySQL DATE format
-            pet.gender,
-            pet.creation_timestamp.strftime('%Y-%m-%d %H:%M:%S'),  # Convert to MySQL TIMESTAMP format
-            pet.age,
-            pet.total_clicks
-        )
+        pet_data = {
+            "name": pet.name,
+            "dob": pet.dob.strftime('%Y-%m-%d'),  # Convert to MySQL DATE format
+            "gender": pet.gender,
+            "creation_timestamp": pet.creation_timestamp.strftime('%Y-%m-%d %H:%M:%S'),  # Convert to MySQL TIMESTAMP format
+            "age": pet.age,
+            "total_clicks": pet.total_clicks
+        }
         db_cursor.execute(insert_query, pet_data)
-        db_cursor.conn.commit()
+        db_cursor.commit()
         logger.info("Pet added to the database successfully!")
     except Exception as e:
         logger.error(f"Error inserting pet into the database: {str(e)}")
+        raise e
     finally:
-        db_cursor.cursor.close()
-        db_cursor.conn.close()
+        db_cursor.close()
 
 # def create_pet(pet: Pet):
 #     with open(f"{DB_FILEPATH}/{pet.pet_id}.json", "w+") as f:

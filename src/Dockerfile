@@ -19,4 +19,4 @@ COPY . .
 RUN conda env create -f ../environment.yml
 RUN conda activate clicker_mania
 
-CMD ["python", "main.py"]
+CMD ["python", "src/app.py"]
