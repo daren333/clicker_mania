@@ -1,7 +1,7 @@
 name: clicker_mania
 
 dependencies:
-  - python ==3.11.*
+  - python ==3.8.*
   - flask == 2.2.2
   - pymysql == 1.0.2
   - mysql

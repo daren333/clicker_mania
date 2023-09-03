@@ -16,7 +16,7 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 
 COPY . .
 
-RUN conda env create -f environment.yml
+RUN conda env create -f ../environment.yml
 RUN conda activate clicker_mania
 
 CMD ["python", "main.py"]

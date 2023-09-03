@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from src.services.business_logic_services.pets_business_service import create_pet, get_all_pets, delete_pet, update_pet, get_pet
+from src.services.serialization_services.pets_serialization_service import create_pet, get_all_pets, delete_pet, update_pet, get_pet
 
 pets_blueprint = Blueprint('pets', __name__)
 
@@ -13,9 +13,9 @@ def health():
 @pets_blueprint.route('/pets', methods=['POST'])
 def api_add_pet():
     """Create a new pet object via POST request"""
-    data = request.get_json()
-    pet = create_pet(data.get('name'), data.get('dob'), data.get('gender'))
+    pet = create_pet(request.get_json())
     return jsonify({'message': 'Pet created successfully', 'pet': pet})
+
 
 @pets_blueprint.route('/pets/<string:pet_id>', methods=['GET'])
 def api_get_pet(pet_id):
@@ -31,8 +31,7 @@ def api_get_pets():
 @pets_blueprint.route('/pets/<string:pet_id>', methods=['PUT'])
 def api_update_pet(pet_id):
     """Update an existing pet object via PUT request"""
-    data = request.get_json()
-    updated_pet = update_pet(pet_id, data)
+    updated_pet = update_pet(pet_id, request.get_json())
     if updated_pet:
         return jsonify({'message': 'Pet updated successfully', 'pet': updated_pet})
     else:

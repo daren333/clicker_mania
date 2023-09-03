@@ -1,11 +1,14 @@
 import json
 import pathlib
 import logging
+from errno import errorcode
 
-import pymysql
+# import pymysql
+import mysql.connector
 from flask import jsonify, current_app
 
-from src.classes.Pet import Pet, PetEncoder, PetDecoder
+from src import config
+from src.classes.Pet import PetDecoder
 
 logger = logging.getLogger("pets_db_service_logger")
 
@@ -14,12 +17,28 @@ DB_FILEPATH = pathlib.Path(__file__).parent.parent / "temp_dbs"
 pet_ids = []
 
 
+def connect_to_db():
+    try:
+        cnx = mysql.connector.connect(user=config.mysql_user,
+                                      password=config.mysql_pw,
+                                      host=config.mysql_host,
+                                      port=config.mysql_port)
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+    else:
+        return cnx
+
 def get_db_connection(db_config):
-    connection = pymysql.connect(**db_config)
-    return connection
+    #print(current_app.config.get("db_config"))
+    return mysql.connector.connect(**db_config).cursor()
 
 
-db_client = get_db_connection(db_config=current_app.get("db_config"))
+#db_cursor = get_db_connection(db_config=current_app.get("db_config"))
 
 
 def get_pet(pet_id: str):
@@ -31,12 +50,38 @@ def get_pet(pet_id: str):
         return json.loads(f.read(), cls=PetDecoder)
 
 
-def create_pet(pet: Pet):
-    with open(f"{DB_FILEPATH}/{pet.pet_id}.json", "w+") as f:
-        f.write(json.dumps(pet, cls=PetEncoder))
+def create_pet(pet):
 
-    add_id_to_id_list(get_id_list(), pet.pet_id)
-    return pet
+    db_cursor = connect_to_db().cursor()
+
+    try:
+        insert_query = (
+            "INSERT INTO pets_table (name, dob, gender, creation_timestamp, age, total_clicks) "
+            "VALUES (%s, %s, %s, %s, %s, %s)"
+        )
+        pet_data = (
+            pet.name,
+            pet.dob.strftime('%Y-%m-%d'),  # Convert to MySQL DATE format
+            pet.gender,
+            pet.creation_timestamp.strftime('%Y-%m-%d %H:%M:%S'),  # Convert to MySQL TIMESTAMP format
+            pet.age,
+            pet.total_clicks
+        )
+        db_cursor.execute(insert_query, pet_data)
+        db_cursor.conn.commit()
+        logger.info("Pet added to the database successfully!")
+    except Exception as e:
+        logger.error(f"Error inserting pet into the database: {str(e)}")
+    finally:
+        db_cursor.cursor.close()
+        db_cursor.conn.close()
+
+# def create_pet(pet: Pet):
+#     with open(f"{DB_FILEPATH}/{pet.pet_id}.json", "w+") as f:
+#         f.write(json.dumps(pet, cls=PetEncoder))
+#
+#     add_id_to_id_list(get_id_list(), pet.pet_id)
+#     return pet
 
 
 def add_id_to_id_list(id_list: list, pet_id: str):

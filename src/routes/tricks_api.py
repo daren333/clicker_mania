@@ -24,3 +24,4 @@ def create_trick():
 
 @clicks_blueprint.route('/tricks', methods=['POST'])
 def create_trick():
+    pass

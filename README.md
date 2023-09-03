@@ -8,7 +8,7 @@ conda activate clickermania
 
 spin up local docker container
 ```
-docker run -d --name mysql-container -e MYSQL_ROOT_PASSWORD=mysecretpassword -p 3306:3306 mysql:latest
+docker run -d --name mysql-container -e MYSQL_ROOT_PASSWORD=example -p 3306:3306 mysql:latest
 ```
 
 Run app in development mode:

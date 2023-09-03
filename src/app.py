@@ -1,6 +1,5 @@
 import logging
 
-import pymysql
 from flask import Flask
 import os
 from src.routes.pets_api import pets_blueprint
@@ -8,6 +7,10 @@ from src.routes.clicks_api import clicks_blueprint
 
 
 def create_app(config_name, logger):
+    # Get the config name from environment variable or use 'development' as default
+    #config_name = os.environ.get('FLASK_CONFIG', 'development')
+    #logger = logging.Logger("api_logger")
+
     app = Flask(__name__)
 
     # Load configuration based on config_name
@@ -30,9 +33,12 @@ def create_app(config_name, logger):
 
 
 if __name__ == '__main__':
-    # Get the config name from environment variable or use 'development' as default
-    config_name = os.environ.get('FLASK_CONFIG', 'development')
     logger = logging.Logger("api_logger")
 
+    logger.info("before create app")
+    config_name = os.environ.get('FLASK_CONFIG', 'development')
+
     app = create_app(config_name, logger)
+    logger.info("after create app before run")
     app.run()
+    logger.info("after run")

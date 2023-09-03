@@ -16,7 +16,7 @@ class Pet:
         self.dob = datetime.strptime(dob, '%m/%d/%Y').date() #if not dob else dob
         self.gender = gender
         self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
-        self.age = _calculate_age(dob, self.creation_timestamp) if not age else age
+        self.age = calculate_age(dob, self.creation_timestamp) if not age else age
         self.total_clicks = 0 if not total_clicks else total_clicks
 
     def update(self, data: dict):
@@ -29,7 +29,7 @@ class Pet:
 
     def _update_dob(self, new_dob):
         self.dob = datetime.strptime(new_dob, '%m/%d/%Y').date()
-        self.age = _calculate_age(birthdate=new_dob, creation_timestamp=datetime.now())
+        self.age = calculate_age(birthdate=new_dob, creation_timestamp=datetime.now())
 
 
 class PetEncoder(json.JSONEncoder):
