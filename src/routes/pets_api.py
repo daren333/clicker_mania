@@ -14,12 +14,19 @@ def health():
 def api_add_pet():
     """Create a new pet object via POST request"""
     pet = create_pet(request.get_json())
-    return jsonify({'message': 'Pet created successfully', 'pet': pet})
+    if pet:
+        return jsonify({'message': 'Pet created successfully', 'pet': pet})
+    else:
+        return jsonify({'message': 'Error - could not create pet'})
 
 
 @pets_blueprint.route('/pets/<string:pet_id>', methods=['GET'])
 def api_get_pet(pet_id):
-    return jsonify(get_pet(pet_id))
+    pet = get_pet(pet_id)
+    if pet:
+        return jsonify({'pet': pet})
+    else:
+        return jsonify({'error': f'Pet with id {pet_id} not found'}), 404
 
 
 @pets_blueprint.route('/pets', methods=['GET'])
@@ -35,12 +42,15 @@ def api_update_pet(pet_id):
     if updated_pet:
         return jsonify({'message': 'Pet updated successfully', 'pet': updated_pet})
     else:
-        return jsonify({'error': 'Pet not found'}), 404
+        return jsonify({'error': f'Pet with id {pet_id} not found'}), 404
 
 
-@pets_blueprint.route('/pets/pet_id', methods=['DELETE'])
+@pets_blueprint.route('/pets/<string:pet_id>', methods=['DELETE'])
 def api_delete_pet(pet_id):
     """Delete pet from DB"""
-    pet = delete_pet(pet_id=pet_id)
-    return jsonify({'message': 'Pet deleted successfully', 'pet': pet})
+    deleted_pet = delete_pet(pet_id=pet_id)
+    if deleted_pet:
+        return jsonify({'message': 'Pet deleted successfully', 'pet': deleted_pet})
+    else:
+        return jsonify({'error': f'Pet with id {pet_id} not found'}), 404
 

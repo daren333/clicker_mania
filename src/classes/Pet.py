@@ -13,7 +13,7 @@ class Pet:
     def __init__(self, name: str, dob: str, gender: str, uuid=None, creation_timestamp=None, age=None, total_clicks=None):
         self.pet_id = str(uuid4()) if not uuid else uuid
         self.name = name
-        self.dob = datetime.strptime(dob, '%m/%d/%Y').date() #if not dob else dob
+        self.dob = datetime.strptime(dob, '%m/%d/%Y').date()
         self.gender = gender
         self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
         self.age = calculate_age(dob, self.creation_timestamp) if not age else age

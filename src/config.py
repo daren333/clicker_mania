@@ -48,12 +48,12 @@ mysql_db = env.get("MYSQL_DB", "clicker_mania")
 
 sql_table_configs = {
     "tricks_table": ("CREATE TABLE IF NOT EXISTS `tricks_table` ("
-                     "`trick_id` INT AUTO_INCREMENT PRIMARY KEY,"
+                     "`trick_id` VARCHAR(255) PRIMARY KEY,"
                      "`trick_name` VARCHAR(255) NOT NULL"
                      ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"),
 
     "pet_table": ("CREATE TABLE IF NOT EXISTS `pets_table` ("
-                          "`pet_id` INT AUTO_INCREMENT PRIMARY KEY,"
+                          "`pet_id` VARCHAR(255) PRIMARY KEY,"
                           "`name` VARCHAR(255) NOT NULL,"
                           "`dob` DATE NOT NULL,"
                           "`gender` VARCHAR(10) NOT NULL,"
@@ -63,12 +63,12 @@ sql_table_configs = {
                           ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin"),
 
     "clicks_table": ("CREATE TABLE IF NOT EXISTS `clicks_table` ("
-                          "  `click_id` INT AUTO_INCREMENT PRIMARY KEY,"
+                          "  `click_id` VARCHAR(255) PRIMARY KEY,"
                           "  `timestamp` TIMESTAMP NOT NULL,"
                           "  `treat_likelihood` INT NOT NULL,"
-                          "  `pet_id` INT NOT NULL,"
+                          "  `pet_id` VARCHAR(255) NOT NULL,"
                           "  `treated` BOOLEAN NOT NULL,"
-                          "  `trick_id` INT NOT NULL,"
+                          "  `trick_id` VARCHAR(255) NOT NULL,"
                           "  FOREIGN KEY (`pet_id`) REFERENCES pets_table (`pet_id`),"
                           "  FOREIGN KEY (`trick_id`) REFERENCES tricks_table (`trick_id`)"  
                           ") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin")

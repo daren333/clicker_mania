@@ -1,41 +1,73 @@
-import json
 import pathlib
 import logging
-from errno import errorcode
-
-# import pymysql
-import mysql.connector
-from flask import jsonify, current_app
-from sqlalchemy import create_engine, text
+import sqlalchemy
 
 from src import config
-from src.classes.Pet import PetDecoder
+from src.classes.Pet import Pet
 
 logger = logging.getLogger("pets_db_service_logger")
 
-DB_FILEPATH = pathlib.Path(__file__).parent.parent / "temp_dbs"
-
-pet_ids = []
-
 
 def connect_to_db():
-    engine = create_engine(
+    engine = sqlalchemy.create_engine(
         "mysql+pymysql://" + config.mysql_user + ":" + config.mysql_pw + "@" + config.mysql_host)
     cursor = engine.connect()
-    cursor.execute(text("USE %s" % config.mysql_db))
+    cursor.execute(sqlalchemy.text("USE %s" % config.mysql_db))
     return cursor
 
 
-#db_cursor = get_db_connection(db_config=current_app.get("db_config"))
-
-
 def get_pet(pet_id: str):
+    db_cursor = connect_to_db()
 
-    if pet_id not in get_id_list():
-        raise FileNotFoundError(f"id: {pet_id} Not found")
+    try:
+        sql = sqlalchemy.text(f"SELECT * FROM pets_table WHERE pet_id = '{pet_id}'")
+        result = db_cursor.execute(sql).fetchone()
+        if result:
+            pet = Pet(
+                uuid=result[0],
+                name=result[1],
+                dob=result[2].strftime('%m/%d/%Y'),
+                gender=result[3],
+                creation_timestamp=result[4].strftime('%m/%d/%Y %H:%M:%S'),
+                age=result[5],
+                total_clicks=result[6]
+            )
+            logger.debug(f"Pets DB Service: pet named {pet.name} found with id: {pet_id}")
+            return pet
+        else:
+            logger.info(f"Pets DB Service: no pet found with id: {pet_id}")
+            return None
+    except Exception as e:
+        logger.error(f"Error getting pet with pet id: {pet_id} from database: {str(e)}")
+        raise e
+    finally:
+        db_cursor.close()
 
-    with open(f"{DB_FILEPATH}/{pet_id}.json", "r") as f:
-        return json.loads(f.read(), cls=PetDecoder)
+
+def get_all_pets():
+    db_cursor = connect_to_db()
+
+    try:
+        sql = sqlalchemy.text("SELECT * FROM pets_table")
+        results = db_cursor.execute(sql).fetchall()
+        pets_list = []
+        for result in results:
+            pet = Pet(
+                uuid=result[0],
+                name=result[1],
+                dob=result[2].strftime('%m/%d/%Y'),
+                gender=result[3],
+                creation_timestamp=result[4].strftime('%m/%d/%Y %H:%M:%S'),
+                age=result[5],
+                total_clicks=result[6]
+            )
+            pets_list.append(pet)
+        return pets_list
+    except Exception as e:
+        logger.error(f"Error getting pets from database: {str(e)}")
+        raise e
+    finally:
+        db_cursor.close()
 
 
 def create_pet(pet):
@@ -43,11 +75,12 @@ def create_pet(pet):
     db_cursor = connect_to_db()
 
     try:
-        insert_query = text(
-            "INSERT INTO pets_table (name, dob, gender, creation_timestamp, age, total_clicks) "
-            "VALUES (:name, :dob, :gender, :creation_timestamp, :age, :total_clicks)"
+        insert_query = sqlalchemy.text(
+            "INSERT INTO pets_table (pet_id, name, dob, gender, creation_timestamp, age, total_clicks) "
+            "VALUES (:pet_id, :name, :dob, :gender, :creation_timestamp, :age, :total_clicks)"
         )
         pet_data = {
+            "pet_id": pet.pet_id,
             "name": pet.name,
             "dob": pet.dob.strftime('%Y-%m-%d'),  # Convert to MySQL DATE format
             "gender": pet.gender,
@@ -58,49 +91,54 @@ def create_pet(pet):
         db_cursor.execute(insert_query, pet_data)
         db_cursor.commit()
         logger.info("Pet added to the database successfully!")
+        return pet
     except Exception as e:
         logger.error(f"Error inserting pet into the database: {str(e)}")
         raise e
     finally:
         db_cursor.close()
 
-# def create_pet(pet: Pet):
-#     with open(f"{DB_FILEPATH}/{pet.pet_id}.json", "w+") as f:
-#         f.write(json.dumps(pet, cls=PetEncoder))
-#
-#     add_id_to_id_list(get_id_list(), pet.pet_id)
-#     return pet
-
-
-def add_id_to_id_list(id_list: list, pet_id: str):
-    id_list.append(pet_id)
-
-    with open(f"{DB_FILEPATH}/id_list.json", "w") as f:
-        f.write(json.dumps(id_list))
-
-
-def get_id_list():
-    with open(f"{DB_FILEPATH}/id_list.json", "r") as f:
-        return json.loads(f.read())
-
-
-def get_all_pets():
-    pets = []
-
-    for pet_id in get_id_list():
-        with open(f"{DB_FILEPATH}/{pet_id}.json", "r") as f:
-            pet = json.loads(f.read(), cls=PetDecoder)
-            pets.append(pet)
-
-    return pets
-
 
 def update_pet(pet_id, pet_obj):
-    # TODO implement when db set up
-    return pet_obj
+    db_cursor = connect_to_db()
+
+    try:
+        #logger.debug(f"Pets DB Service: pet found with pet_id: {pet_id}. Updating fields from {existing_pet.__dict__} to {pet_obj.__dict__}")
+        # If the pet exists, update its information
+        update_sql = sqlalchemy.text(f"""
+                UPDATE pets_table
+                SET name = '{pet_obj.name}', dob = '{pet_obj.dob.strftime('%Y-%m-%d')}', gender = '{pet_obj.gender}', age = '{pet_obj.age}'
+                WHERE pet_id = '{pet_id}'
+            """)
+        db_cursor.execute(update_sql)
+        db_cursor.commit()
+
+        return pet_obj
+    except Exception as e:
+        logger.error(f"Error upserting pet into the database: {str(e)}")
+        raise e
+    finally:
+        db_cursor.close()
 
 
 def delete_pet(pet_id):
-    # TODO implement when db set up
+    db_cursor = connect_to_db()
 
-    return pet_id
+    try:
+        # Check if the pet with the given pet_id exists
+        existing_pet = get_pet(pet_id=pet_id)
+
+        if not existing_pet:
+            logger.error(f"Pets DB Service: No pet found with id: {pet_id}")
+            return None
+
+        logger.info(f"Pets DB Service: Deleting pet with pet_id {pet_id} from database")
+        delete_sql = sqlalchemy.text(f"DELETE FROM pets_table WHERE pet_id = '{pet_id}'")
+        db_cursor.execute(delete_sql)
+        db_cursor.commit()
+        return existing_pet
+    except Exception as e:
+        logger.error(f"Error deleting pet from the database: {str(e)}")
+        raise e
+    finally:
+        db_cursor.close()
