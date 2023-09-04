@@ -19,7 +19,7 @@ def get_trick(user_id: str, pet_id: str, trick_id: str):
 
 def get_all_tricks(user_id: str, pet_id: str):
     """Get all tricks"""
-    return tricks_db_service.get_all_tricks(user_id=user_id, pet_id=pet_id)
+    return tricks_db_service.get_all_tricks_by_pet(user_id=user_id, pet_id=pet_id)
 
 
 def update_trick(user_id, pet_id, trick_id, new_name):

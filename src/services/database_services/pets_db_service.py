@@ -24,13 +24,12 @@ def get_pet(pet_id: str):
         result = db_cursor.execute(sql).fetchone()
         if result:
             pet = Pet(
-                uuid=result[0],
+                pet_id=result[0],
                 name=result[1],
                 dob=result[2].strftime('%m/%d/%Y'),
                 gender=result[3],
                 creation_timestamp=result[4].strftime('%m/%d/%Y %H:%M:%S'),
-                age=result[5],
-                total_clicks=result[6]
+                user_id=result[5]
             )
             logger.debug(f"Pets DB Service: pet named {pet.name} found with id: {pet_id}")
             return pet
@@ -44,22 +43,21 @@ def get_pet(pet_id: str):
         db_cursor.close()
 
 
-def get_all_pets():
+def get_all_pets(user_id: str):
     db_cursor = connect_to_db()
 
     try:
-        sql = sqlalchemy.text("SELECT * FROM pets_table")
+        sql = sqlalchemy.text(f"SELECT * FROM pets_table WHERE user_id = '{user_id}'")
         results = db_cursor.execute(sql).fetchall()
         pets_list = []
         for result in results:
             pet = Pet(
-                uuid=result[0],
+                pet_id=result[0],
                 name=result[1],
                 dob=result[2].strftime('%m/%d/%Y'),
                 gender=result[3],
                 creation_timestamp=result[4].strftime('%m/%d/%Y %H:%M:%S'),
-                age=result[5],
-                total_clicks=result[6]
+                user_id=result[5]
             )
             pets_list.append(pet)
         return pets_list
@@ -76,8 +74,8 @@ def create_pet(pet):
 
     try:
         insert_query = sqlalchemy.text(
-            "INSERT INTO pets_table (pet_id, name, dob, gender, creation_timestamp, age, total_clicks) "
-            "VALUES (:pet_id, :name, :dob, :gender, :creation_timestamp, :age, :total_clicks)"
+            "INSERT INTO pets_table (pet_id, name, dob, gender, creation_timestamp, user_id, age) "
+            "VALUES (:pet_id, :name, :dob, :gender, :creation_timestamp, :user_id, :age)"
         )
         pet_data = {
             "pet_id": pet.pet_id,
@@ -86,7 +84,7 @@ def create_pet(pet):
             "gender": pet.gender,
             "creation_timestamp": pet.creation_timestamp.strftime('%Y-%m-%d %H:%M:%S'),  # Convert to MySQL TIMESTAMP format
             "age": pet.age,
-            "total_clicks": pet.total_clicks
+            "user_id": pet.user_id
         }
         db_cursor.execute(insert_query, pet_data)
         db_cursor.commit()
@@ -103,11 +101,10 @@ def update_pet(pet_id, pet_obj):
     db_cursor = connect_to_db()
 
     try:
-        #logger.debug(f"Pets DB Service: pet found with pet_id: {pet_id}. Updating fields from {existing_pet.__dict__} to {pet_obj.__dict__}")
         # If the pet exists, update its information
         update_sql = sqlalchemy.text(f"""
                 UPDATE pets_table
-                SET name = '{pet_obj.name}', dob = '{pet_obj.dob.strftime('%Y-%m-%d')}', gender = '{pet_obj.gender}', age = '{pet_obj.age}'
+                SET name = '{pet_obj.name}', dob = '{pet_obj.dob.strftime('%Y-%m-%d')}', gender = '{pet_obj.gender}'
                 WHERE pet_id = '{pet_id}'
             """)
         db_cursor.execute(update_sql)
@@ -122,7 +119,7 @@ def update_pet(pet_id, pet_obj):
 
 
 def delete_pet(pet_id):
-    # TODO delete all associated tricks
+
     db_cursor = connect_to_db()
 
     try:
@@ -134,9 +131,17 @@ def delete_pet(pet_id):
             return None
 
         logger.info(f"Pets DB Service: Deleting pet with pet_id {pet_id} from database")
-        delete_sql = sqlalchemy.text(f"DELETE FROM pets_table WHERE pet_id = '{pet_id}'")
-        db_cursor.execute(delete_sql)
-        db_cursor.commit()
+
+        deletion_ops = {
+            'delete_pets_sql': sqlalchemy.text(f"DELETE FROM pets_table WHERE pet_id = '{pet_id}'"),
+            'delete_tricks_sql': sqlalchemy.text(f"DELETE FROM tricks_table WHERE user_id = '{pet_id}'"),
+            'delete_clicks_sql': sqlalchemy.text(f"DELETE FROM clicks_table WHERE user_id = '{pet_id}'")
+        }
+
+        for sql_stmt in deletion_ops.values():
+            db_cursor.execute(sql_stmt)
+            db_cursor.commit()
+
         return existing_pet
     except Exception as e:
         logger.error(f"Error deleting pet from the database: {str(e)}")

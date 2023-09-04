@@ -6,9 +6,9 @@ from src.classes.Pet import Pet, PetDecoder
 
 
 class User:
-    def __init__(self, name: str, dob: str, uuid: str = None, creation_timestamp: datetime = None,
+    def __init__(self, name: str, dob: str, user_id: str = None, creation_timestamp: datetime = None,
                  email: str = None, phone_number: str = None, pets: dict[Pet] = None):
-        self.user_id = str(uuid4()) if not uuid else uuid
+        self.user_id = str(uuid4()) if not user_id else user_id
         self.name = name
         self.dob = datetime.strptime(dob, '%m/%d/%Y').date()
         self.email = email

@@ -7,8 +7,8 @@ from src.classes.Click import ClickDecoder
 
 class Trick:
 
-    def __init__(self, user_id: str, pet_id: str, name: str, uuid: str = None, clicks: dict[Click] = None):
-        self.trick_id = str(uuid4()) if not uuid else uuid
+    def __init__(self, user_id: str, pet_id: str, name: str, trick_id: str = None, clicks: dict[Click] = None):
+        self.trick_id = str(uuid4()) if not trick_id else trick_id
         self.name = name
         self.user_id = user_id
         self.pet_id = pet_id
@@ -36,7 +36,7 @@ class TrickDecoder(json.JSONDecoder):
                 user_id=obj['user_id'],
                 pet_id=obj['pet_id'],
                 name=obj['name'],
-                uuid=obj['trick_id'],
+                trick_id=obj['trick_id'],
                 clicks=obj['clicks']
             )
             if 'clicks' in obj:

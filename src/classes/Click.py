@@ -13,13 +13,13 @@ class TreatLikelihood(Enum):
 
 class Click:
 
-    def __init__(self, user_id, pet_id, trick_id, timestamp, treat_likelihood):
+    def __init__(self, user_id, pet_id, trick_id, timestamp, treat_likelihood, treated):
         self.timestamp = datetime.now() if not timestamp else timestamp
         self.treat_likelihood = TreatLikelihood(treat_likelihood)
         self.user_id = user_id
         self.pet_id = pet_id
         self.trick_id = trick_id
-        self.treated = self.determine_if_treating(self.treat_likelihood)
+        self.treated = self.determine_if_treating(self.treat_likelihood) if not treated else treated
 
     def determine_if_treating(self, treat_likelihood: TreatLikelihood) -> bool:
         match treat_likelihood:
@@ -60,5 +60,5 @@ class ClickDecoder(json.JSONDecoder):
             timestamp = datetime.fromisoformat(obj['timestamp'])
             treat_likelihood = TreatLikelihood(obj['treat_likelihood'])
             return Click(user_id=obj['user_id'], pet_id=obj['pet_id'], trick_id=obj['trick_id'], timestamp=timestamp,
-                         treat_likelihood=treat_likelihood)
+                         treat_likelihood=treat_likelihood, treated=obj['treated'])
         return obj
