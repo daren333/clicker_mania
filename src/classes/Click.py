@@ -13,7 +13,7 @@ class TreatLikelihood(Enum):
 
 class Click:
 
-    def __init__(self, user_id, pet_id, trick_id, timestamp, treat_likelihood, treated):
+    def __init__(self, user_id, pet_id, trick_id, treat_likelihood, timestamp=None, treated=None):
         self.timestamp = datetime.now() if not timestamp else timestamp
         self.treat_likelihood = TreatLikelihood(treat_likelihood)
         self.user_id = user_id

@@ -16,7 +16,7 @@ def api_add_click(user_id, pet_id, trick_id):
 
 @clicks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>/clicks/<string:click_timestamp>', methods=['GET'])
 def api_get_click(user_id, pet_id, trick_id, click_timestamp):
-    click = get_click(user_id=user_id, pet_id=pet_id, trick_id=trick_id, click_timestamp=click_timestamp)
+    click = get_click(click_timestamp=click_timestamp)
     if click:
         return jsonify({'click': click})
     else:
@@ -26,4 +26,4 @@ def api_get_click(user_id, pet_id, trick_id, click_timestamp):
 @clicks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>/clicks', methods=['GET'])
 def api_get_clicks(user_id, pet_id, trick_id):
     """Get all clicks"""
-    return jsonify({'clicks': get_all_clicks(user_id=user_id, pet_id=pet_id, trick_id=trick_id)})
+    return jsonify({'clicks': get_all_clicks(trick_id=trick_id)})

@@ -20,9 +20,9 @@ def get_user(user_id: str):
     return json.dumps(user, cls=UserEncoder) if user else None
 
 
-def get_all_users(user_id):
+def get_all_users():
     """Get all users"""
-    return [json.dumps(user, cls=UserEncoder) for user in users_business_service.get_all_users(user_id=user_id)]
+    return [json.dumps(user, cls=UserEncoder) for user in users_business_service.get_all_users()]
 
 
 def update_user(user_id, json_data):

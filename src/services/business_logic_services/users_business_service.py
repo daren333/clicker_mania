@@ -17,7 +17,7 @@ def get_user(user_id: str):
     return users_db_service.get_user(user_id=user_id)
 
 
-def get_all_users(user_id):
+def get_all_users():
     """Get all users"""
     return users_db_service.get_all_users()
 
@@ -32,7 +32,7 @@ def update_user(user_id, new_name, new_dob, new_email, new_phone_number):
         user.update_dob(new_dob=new_dob)
         user.email = new_email
         user.phone_number = new_phone_number
-        updated_user = users_db_service.update_user(user_id=user_id, user_obj=user)
+        updated_user = users_db_service.update_user(user_id=user_id, new_user_obj=user)
         return updated_user
     else:
         logger.debug(f"Users Business Service: no user found with id {user_id}")

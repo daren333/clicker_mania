@@ -16,7 +16,7 @@ def api_add_trick(user_id, pet_id):
 
 @tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['GET'])
 def api_get_trick(user_id, pet_id, trick_id):
-    trick = get_trick(user_id=user_id, pet_id=pet_id, trick_id=trick_id)
+    trick = get_trick(trick_id=trick_id)
     if trick:
         return jsonify({'trick': trick})
     else:
@@ -26,13 +26,13 @@ def api_get_trick(user_id, pet_id, trick_id):
 @tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks', methods=['GET'])
 def api_get_tricks(user_id, pet_id):
     """Get all tricks"""
-    return jsonify({'tricks': get_all_tricks(user_id=user_id, pet_id=pet_id)})
+    return jsonify({'tricks': get_all_tricks(pet_id=pet_id)})
 
 
 @tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['PUT'])
 def api_update_trick(user_id, pet_id, trick_id):
     """Update an existing trick object via PUT request"""
-    updated_trick = update_trick(user_id=user_id, pet_id=pet_id, trick_id=trick_id, json_data=request.get_json())
+    updated_trick = update_trick(trick_id=trick_id, json_data=request.get_json())
     if updated_trick:
         return jsonify({'message': 'trick updated successfully', 'trick': updated_trick})
     else:
@@ -42,7 +42,7 @@ def api_update_trick(user_id, pet_id, trick_id):
 @tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['DELETE'])
 def api_delete_trick(user_id, pet_id, trick_id):
     """Delete trick from DB"""
-    deleted_trick = delete_trick(user_id=user_id, pet_id=pet_id, trick_id=trick_id)
+    deleted_trick = delete_trick(trick_id=trick_id)
     if deleted_trick:
         return jsonify({'message': 'trick deleted successfully', 'trick': deleted_trick})
     else:

@@ -13,8 +13,8 @@ def create_pet(user_id, name, dob, gender):
     return pets_db_service.create_pet(pet=pet)
 
 
-def get_pet(user_id: str, pet_id: str):
-    return pets_db_service.get_pet(user_id=user_id, pet_id=pet_id)
+def get_pet(pet_id: str):
+    return pets_db_service.get_pet(pet_id=pet_id)
 
 
 def get_all_pets(user_id):
@@ -22,9 +22,9 @@ def get_all_pets(user_id):
     return pets_db_service.get_all_pets(user_id=user_id)
 
 
-def update_pet(user_id, pet_id, new_name, new_dob, new_gender):
+def update_pet(pet_id, new_name, new_dob, new_gender):
     """Update pet"""
-    pet = get_pet(user_id=user_id, pet_id=pet_id)
+    pet = get_pet(pet_id=pet_id)
 
     if pet:
         logger.debug("Pets Business Service: pet found - inserting")
@@ -38,6 +38,6 @@ def update_pet(user_id, pet_id, new_name, new_dob, new_gender):
         return None
 
 
-def delete_pet(user_id, pet_id):
-    return pets_db_service.delete_pet(user_id=user_id, pet_id=pet_id)
+def delete_pet(pet_id):
+    return pets_db_service.delete_pet(pet_id=pet_id)
 

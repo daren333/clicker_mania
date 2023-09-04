@@ -16,7 +16,7 @@ def api_add_pet(user_id):
 
 @pets_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>', methods=['GET'])
 def api_get_pet(user_id, pet_id):
-    pet = get_pet(user_id=user_id, pet_id=pet_id)
+    pet = get_pet(pet_id=pet_id)
     if pet:
         return jsonify({'pet': pet})
     else:
@@ -32,7 +32,7 @@ def api_get_pets(user_id):
 @pets_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>', methods=['PUT'])
 def api_update_pet(user_id, pet_id):
     """Update an existing pet object via PUT request"""
-    updated_pet = update_pet(user_id=user_id, pet_id=pet_id, json_data=request.get_json())
+    updated_pet = update_pet(pet_id=pet_id, json_data=request.get_json())
     if updated_pet:
         return jsonify({'message': 'Pet updated successfully', 'pet': updated_pet})
     else:
@@ -42,7 +42,7 @@ def api_update_pet(user_id, pet_id):
 @pets_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>', methods=['DELETE'])
 def api_delete_pet(user_id, pet_id):
     """Delete pet from DB"""
-    deleted_pet = delete_pet(user_id=user_id, pet_id=pet_id)
+    deleted_pet = delete_pet(pet_id=pet_id)
     if deleted_pet:
         return jsonify({'message': 'Pet deleted successfully', 'pet': deleted_pet})
     else:

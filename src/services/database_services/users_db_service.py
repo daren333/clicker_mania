@@ -121,7 +121,7 @@ def update_user(user_id, new_user_obj):
         db_cursor.close()
 
 
-def delete_pet(user_id):
+def delete_user(user_id):
     db_cursor = connect_to_db()
 
     try:
