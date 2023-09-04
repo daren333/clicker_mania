@@ -29,9 +29,8 @@ def update_pet(user_id, pet_id, new_name, new_dob, new_gender):
     if pet:
         logger.debug("Pets Business Service: pet found - inserting")
         pet.name = new_name
-        pet.dob = datetime.strptime(new_dob, '%m/%d/%Y').date()
+        pet.update_dob(new_dob=new_dob)
         pet.gender = new_gender
-        pet.age = calculate_age(new_dob, datetime.now())
         updated_pet = pets_db_service.update_pet(pet_id=pet_id, pet_obj=pet)
         return updated_pet
     else:
