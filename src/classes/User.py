@@ -14,12 +14,23 @@ class User:
         self.email = email
         self.phone_number = phone_number
         self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
+        self.age = self.calculate_age()
         self.pets = {} if not pets else pets
 
     def add_pet(self, pet):
         if pet.pet_id in self.pets.keys():
             raise KeyError(f"Pet with id {pet.pet_id} already exists")
         self.pets[pet.pet_id] = pet
+
+    def calculate_age(self):
+        birthdate = self.dob
+        age = datetime.now() - birthdate
+        return age.days // 365
+
+    def update_dob(self, new_dob):
+        self.dob = datetime.strptime(new_dob, '%m/%d/%Y').date()
+        self.age = self.calculate_age()
+
 
 
 class UserEncoder(json.JSONEncoder):

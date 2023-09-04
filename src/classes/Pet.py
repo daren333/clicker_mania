@@ -7,25 +7,24 @@ from src.classes.Trick import TrickDecoder
 
 class Pet:
     def __init__(self, user_id: str, name: str, dob: str, gender: str, pet_id: str = None,
-                 creation_timestamp: datetime = None, age: int = None, tricks: dict[Trick] = None):
+                 creation_timestamp: datetime = None, tricks: dict[Trick] = None):
         self.user_id = user_id
         self.pet_id = str(uuid4()) if not pet_id else pet_id
         self.name = name
         self.dob = datetime.strptime(dob, '%m/%d/%Y').date()
         self.gender = gender
         self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
-        self.age = self.calculate_age(dob, self.creation_timestamp) if not age else age
+        self.age = self.calculate_age()
         self.tricks = {} if not tricks else tricks
 
-    def calculate_age(self, birthdate, creation_timestamp):
-        birthdate = datetime.strptime(birthdate, '%m/%d/%Y').date()
-        age = creation_timestamp.date() - birthdate
+    def calculate_age(self):
+        birthdate = self.dob
+        age = datetime.now() - birthdate
         return age.days // 365
 
     def update_dob(self, new_dob):
         self.dob = datetime.strptime(new_dob, '%m/%d/%Y').date()
-        self.age = self.calculate_age(birthdate=new_dob, creation_timestamp=datetime.now())
-
+        self.age = self.calculate_age()
 
 class PetEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -52,7 +51,6 @@ class PetDecoder(json.JSONDecoder):
                 name=obj['name'],
                 dob=obj['dob'],
                 gender=obj['gender'],
-                age=obj['age'],
                 tricks=obj['tricks']
             )
             if 'tricks' in obj:

@@ -9,9 +9,7 @@ def create_trick(user_id, pet_id, json_data):
 
     trick = tricks_business_service.create_trick(user_id=user_id,
                                                  pet_id=pet_id,
-                                                 name=json_data.get('name'),
-                                                 birthday=json_data.get('dob'),
-                                                 gender=json_data.get('gender'))
+                                                 name=json_data.get('name'))
 
     return json.dumps(trick, cls=TrickEncoder)
 

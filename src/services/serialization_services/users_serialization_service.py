@@ -7,10 +7,10 @@ from src.services.business_logic_services import users_business_service
 def create_user(json_data):
     """Create a new user object"""
 
-    user = users_business_service.create_user(user_id=json_data.get('user'),
-                                              name=json_data.get('name'),
-                                              birthday=json_data.get('dob'),
-                                              gender=json_data.get('gender'))
+    user = users_business_service.create_user(name=json_data.get('name'),
+                                              dob=json_data.get('dob'),
+                                              email=json_data.get('email'),
+                                              phone_number=json_data.get('phone_number'))
 
     return json.dumps(user, cls=UserEncoder)
 

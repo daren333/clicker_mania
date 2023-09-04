@@ -7,19 +7,19 @@ from src.services.database_services import pets_db_service
 logger = logging.getLogger("pets_business_service_logger")
 
 
-def create_pet(user_id, name, birthday, gender):
+def create_pet(user_id, name, dob, gender):
     """Create a new pet object"""
-    pet = Pet(name=name, dob=birthday, gender=gender)
+    pet = Pet(user_id=user_id, name=name, dob=dob, gender=gender)
     return pets_db_service.create_pet(pet=pet)
 
 
-def get_pet(user_id, pet_id: str):
-    return pets_db_service.get_pet(pet_id=pet_id)
+def get_pet(user_id: str, pet_id: str):
+    return pets_db_service.get_pet(user_id=user_id, pet_id=pet_id)
 
 
 def get_all_pets(user_id):
     """Get all pets"""
-    return pets_db_service.get_all_pets()
+    return pets_db_service.get_all_pets(user_id=user_id)
 
 
 def update_pet(user_id, pet_id, new_name, new_dob, new_gender):
@@ -39,5 +39,5 @@ def update_pet(user_id, pet_id, new_name, new_dob, new_gender):
 
 
 def delete_pet(user_id, pet_id):
-    return pets_db_service.delete_pet(pet_id=pet_id)
+    return pets_db_service.delete_pet(user_id=user_id, pet_id=pet_id)
 

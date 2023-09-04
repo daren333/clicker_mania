@@ -10,15 +10,13 @@ def create_click(user_id, pet_id, trick_id, json_data):
     click = clicks_business_service.create_click(user_id=user_id,
                                                  pet_id=pet_id,
                                                  trick_id=trick_id,
-                                                 name=json_data.get('name'),
-                                                 birthday=json_data.get('dob'),
-                                                 gender=json_data.get('gender'))
+                                                 treat_likelihood=json_data.get("treat_likelihood"))
 
     return json.dumps(click, cls=ClickEncoder)
 
 
-def get_click(user_id: str, pet_id: str, trick_id: str, click_id: str):
-    click = clicks_business_service.get_click(user_id=user_id, pet_id=pet_id, trick_id=trick_id, click_id=click_id)
+def get_click(user_id: str, pet_id: str, trick_id: str, click_timestamp: str):
+    click = clicks_business_service.get_click(user_id=user_id, pet_id=pet_id, trick_id=trick_id, click_timestamp=click_timestamp)
     return json.dumps(click, cls=ClickEncoder) if click else None
 
 

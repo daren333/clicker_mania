@@ -9,7 +9,7 @@ def create_pet(user_id, json_data):
 
     pet = pets_business_service.create_pet(user_id=user_id,
                                            name=json_data.get('name'),
-                                           birthday=json_data.get('dob'),
+                                           dob=json_data.get('dob'),
                                            gender=json_data.get('gender'))
 
     return json.dumps(pet, cls=PetEncoder)

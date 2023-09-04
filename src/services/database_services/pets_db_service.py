@@ -122,6 +122,7 @@ def update_pet(pet_id, pet_obj):
 
 
 def delete_pet(pet_id):
+    # TODO delete all associated tricks
     db_cursor = connect_to_db()
 
     try:
