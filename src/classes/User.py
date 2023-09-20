@@ -13,7 +13,7 @@ class User:
         self.dob = datetime.strptime(dob, '%m/%d/%Y') if isinstance(dob, str) else dob
         self.email = email
         self.phone_number = phone_number
-        self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(str(creation_timestamp), '%m/%d/%Y %H:%M:%S').date()
+        self.creation_timestamp = datetime.now() if not creation_timestamp else creation_timestamp #datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
         self.age = self.calculate_age()
         self.pets = {} if not pets else pets
 
@@ -24,7 +24,7 @@ class User:
 
     def calculate_age(self):
         birthdate = self.dob
-        age = datetime.now() - birthdate
+        age = datetime.now() - datetime(birthdate.year, birthdate.month, birthdate.day, 0, 0)
         return age.days // 365
 
     def update_dob(self, new_dob):

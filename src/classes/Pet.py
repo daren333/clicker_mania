@@ -11,15 +11,15 @@ class Pet:
         self.user_id = user_id
         self.pet_id = str(uuid4()) if not pet_id else pet_id
         self.name = name
-        self.dob = datetime.strptime(dob, '%m/%d/%Y')#.date()
+        self.dob = datetime.strptime(dob, '%m/%d/%Y') if isinstance(dob, str) else dob
         self.gender = gender
-        self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(str(creation_timestamp), '%m/%d/%Y %H:%M:%S').date()
+        self.creation_timestamp = datetime.now() if not creation_timestamp else creation_timestamp #datetime.strptime(str(creation_timestamp), '%m/%d/%Y %H:%M:%S').date()
         self.age = self.calculate_age()
         self.tricks = {} if not tricks else tricks
 
     def calculate_age(self):
         birthdate = self.dob
-        age = datetime.now() - birthdate
+        age = datetime.now() - datetime(birthdate.year, birthdate.month, birthdate.day, 0, 0)
         return age.days // 365
 
     def update_dob(self, new_dob):
