@@ -7,13 +7,13 @@ from src.classes.Trick import TrickDecoder
 
 class Pet:
     def __init__(self, user_id: str, name: str, dob: str, gender: str, pet_id: str = None,
-                 creation_timestamp: datetime = None, tricks: dict[Trick] = None):
+                 creation_timestamp: datetime = None, tricks: dict = None):
         self.user_id = user_id
         self.pet_id = str(uuid4()) if not pet_id else pet_id
         self.name = name
-        self.dob = datetime.strptime(dob, '%m/%d/%Y').date()
+        self.dob = datetime.strptime(dob, '%m/%d/%Y')#.date()
         self.gender = gender
-        self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
+        self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(str(creation_timestamp), '%m/%d/%Y %H:%M:%S').date()
         self.age = self.calculate_age()
         self.tricks = {} if not tricks else tricks
 

@@ -4,6 +4,8 @@ from flask import Flask
 import os
 from src.routes.pets_api import pets_blueprint
 from src.routes.clicks_api import clicks_blueprint
+from src.routes.tricks_api import tricks_blueprint
+from src.routes.users_api import users_blueprint
 
 
 def create_app(config_name, logger):
@@ -26,8 +28,10 @@ def create_app(config_name, logger):
 
     # Import and register routes
 
+    app.register_blueprint(users_blueprint)
     app.register_blueprint(pets_blueprint)
     app.register_blueprint(clicks_blueprint)
+    app.register_blueprint(tricks_blueprint)
 
     return app
 
@@ -35,10 +39,8 @@ def create_app(config_name, logger):
 if __name__ == '__main__':
     logger = logging.Logger("api_logger")
 
-    logger.info("before create app")
     config_name = os.environ.get('FLASK_CONFIG', 'development')
 
     app = create_app(config_name, logger)
     logger.info("after create app before run")
     app.run()
-    logger.info("after run")

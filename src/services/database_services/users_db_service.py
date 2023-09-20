@@ -82,7 +82,7 @@ def create_user(user):
             "VALUES (:user_id, :name, :dob, :email, :phone_number, :creation_timestamp)"
         )
         user_data = {
-            "pet_id": user.user_id,
+            "user_id": user.user_id,
             "name": user.name,
             "dob": user.dob.strftime('%Y-%m-%d'),  # Convert to MySQL DATE format
             "email": user.email,

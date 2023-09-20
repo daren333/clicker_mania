@@ -4,7 +4,7 @@ from src.services.serialization_services.tricks_serialization_service import cre
 tricks_blueprint = Blueprint('tricks', __name__)
 
 
-@tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks', methods=['POST'])
+@tricks_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>/tricks', methods=['POST'])
 def api_add_trick(user_id, pet_id):
     """Create a new trick object via POST request"""
     trick = create_trick(user_id=user_id, pet_id=pet_id, json_data=request.get_json())
@@ -14,7 +14,7 @@ def api_add_trick(user_id, pet_id):
         return jsonify({'message': 'Error - could not create trick'})
 
 
-@tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['GET'])
+@tricks_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['GET'])
 def api_get_trick(user_id, pet_id, trick_id):
     trick = get_trick(trick_id=trick_id)
     if trick:
@@ -23,13 +23,13 @@ def api_get_trick(user_id, pet_id, trick_id):
         return jsonify({'error': f'trick with id {trick_id} not found'}), 404
 
 
-@tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks', methods=['GET'])
+@tricks_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>/tricks', methods=['GET'])
 def api_get_tricks(user_id, pet_id):
     """Get all tricks"""
     return jsonify({'tricks': get_all_tricks(pet_id=pet_id)})
 
 
-@tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['PUT'])
+@tricks_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['PUT'])
 def api_update_trick(user_id, pet_id, trick_id):
     """Update an existing trick object via PUT request"""
     updated_trick = update_trick(trick_id=trick_id, json_data=request.get_json())
@@ -39,7 +39,7 @@ def api_update_trick(user_id, pet_id, trick_id):
         return jsonify({'error': f'trick with id {trick_id} not found'}), 404
 
 
-@tricks_blueprint.route('users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['DELETE'])
+@tricks_blueprint.route('/users/<string:user_id>/pets/<string:pet_id>/tricks/<string:trick_id>', methods=['DELETE'])
 def api_delete_trick(user_id, pet_id, trick_id):
     """Delete trick from DB"""
     deleted_trick = delete_trick(trick_id=trick_id)

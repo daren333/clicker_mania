@@ -1,19 +1,19 @@
-from uuid import uuid4, UUID
 import json
 from datetime import datetime
+from uuid import uuid4
 
-from src.classes.Pet import Pet, PetDecoder
+from src.classes.Pet import PetDecoder
 
 
 class User:
     def __init__(self, name: str, dob: str, user_id: str = None, creation_timestamp: datetime = None,
-                 email: str = None, phone_number: str = None, pets: dict[Pet] = None):
+                 email: str = None, phone_number: str = None, pets: dict = None):
         self.user_id = str(uuid4()) if not user_id else user_id
         self.name = name
-        self.dob = datetime.strptime(dob, '%m/%d/%Y').date()
+        self.dob = datetime.strptime(dob, '%m/%d/%Y') if isinstance(dob, str) else dob
         self.email = email
         self.phone_number = phone_number
-        self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(creation_timestamp, '%m/%d/%Y %H:%M:%S').date()
+        self.creation_timestamp = datetime.now() if not creation_timestamp else datetime.strptime(str(creation_timestamp), '%m/%d/%Y %H:%M:%S').date()
         self.age = self.calculate_age()
         self.pets = {} if not pets else pets
 
@@ -55,10 +55,10 @@ class UserDecoder(json.JSONDecoder):
             user = User(
                 name=obj['name'],
                 dob=obj['dob'],
-                uuid=obj['user_id'],
+                user_id=obj['user_id'],
                 email=obj['email'],
                 phone_number=obj['phone_number'],
-                creation_timestamp=obj['creation_timestamp'],
+                creation_timestamp=datetime.strptime(obj['creation_timestamp'], '%m/%d/%Y'),
                 pets=obj['pets']
             )
             if 'pets' in obj:

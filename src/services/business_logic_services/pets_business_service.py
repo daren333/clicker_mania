@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from src.classes.Pet import Pet, calculate_age
+from src.classes.Pet import Pet
 from src.services.database_services import pets_db_service
 
 logger = logging.getLogger("pets_business_service_logger")
