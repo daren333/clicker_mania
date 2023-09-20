@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from uuid import uuid4
 
-from src.classes.Pet import PetDecoder
+from src.classes.Pet import PetDecoder, PetEncoder
 
 
 class User:
@@ -43,7 +43,7 @@ class UserEncoder(json.JSONEncoder):
                 "email": obj.email,
                 "phone_number": obj.phone_number,
                 "creation_timestamp": obj.creation_timestamp.strftime('%m/%d/%Y %H:%M:%S'),
-                "pets": obj.pets
+                "pets":  {pet_id: json.dumps(pet, cls=PetEncoder) for pet_id, pet in obj.pets.items()}
             }
         return super().default(obj)
 
@@ -66,29 +66,3 @@ class UserDecoder(json.JSONDecoder):
                     user.pets[pet_id] = PetDecoder().decode(json.dumps(pet_data))
             return user
         return obj
-
-
-# class UserEncoder(json.JSONEncoder):
-#     def default(self, obj):
-#         if isinstance(obj, (User, Pet)):
-#             # Convert the object to a dictionary
-#             obj_dict = obj.__dict__
-#             # Convert UUID objects to strings
-#             for key, value in obj_dict.items():
-#                 if isinstance(value, UUID):
-#                     obj_dict[key] = str(value)
-#             return obj_dict
-#         return super().default(obj)
-#
-#
-# class UserDecoder(json.JSONDecoder):
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(object_hook=self._decode_user, *args, **kwargs)
-#
-#     def _decode_user(self, s):
-#         obj_dict = super().decode(s)
-#         if 'pets' in obj_dict:
-#             pets_data = obj_dict['pets']
-#             obj_dict['pets'] = {k: Pet(**v) for k, v in pets_data.items()}
-#         return User(**obj_dict)

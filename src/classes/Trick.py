@@ -2,7 +2,7 @@ import json
 from uuid import uuid4
 
 from src.classes import Click
-from src.classes.Click import ClickDecoder
+from src.classes.Click import ClickDecoder, ClickEncoder
 
 
 class Trick:
@@ -23,7 +23,7 @@ class TrickEncoder(json.JSONEncoder):
                 "name": obj.name,
                 "user_id": obj.user_id,
                 "pet_id": obj.pet_id,
-                "clicks": obj.clicks
+                "clicks": {click_timestamp: json.dumps(click, cls=ClickEncoder) for click_timestamp, click in obj.clicks.items()}
             }
         return super().default(obj)
 
@@ -44,23 +44,3 @@ class TrickDecoder(json.JSONDecoder):
                     trick.clicks[click_id] = ClickDecoder().decode(json.dumps(click_data))
             return trick
         return obj
-
-# class TrickEncoder(json.JSONEncoder):
-#     def default(self, obj):
-#         if isinstance(obj, Trick):
-#             return {
-#                 'user_id': obj.user_id,
-#                 'pet_id': obj.pet_id,
-#                 'name': obj.name,
-#             }
-#         return super().default(obj)
-#
-#
-# class TrickDecoder(json.JSONDecoder):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(object_hook=self._decode_trick, *args, **kwargs)
-#
-#     def _decode_trick(self, obj):
-#         if 'user_id' in obj and 'pet_id' in obj and 'trick_id' in obj and 'name' in obj:
-#             return Trick(**obj)
-#         return obj

@@ -2,7 +2,7 @@ import json
 from uuid import uuid4
 from datetime import datetime
 from src.classes import Trick
-from src.classes.Trick import TrickDecoder
+from src.classes.Trick import TrickDecoder, TrickEncoder
 
 
 class Pet:
@@ -36,7 +36,7 @@ class PetEncoder(json.JSONEncoder):
                 "dob": obj.dob.strftime('%m/%d/%Y'),
                 "gender": obj.gender,
                 "age": obj.age,
-                "tricks": obj.tricks
+                "tricks": {trick_id: json.dumps(trick, cls=TrickEncoder) for trick_id, trick in obj.tricks.items()}
             }
         return super().default(obj)
 
@@ -58,36 +58,3 @@ class PetDecoder(json.JSONDecoder):
                     pet.tricks[trick_id] = TrickDecoder().decode(json.dumps(trick_data))
             return pet
         return obj
-
-
-#
-# class PetEncoder(json.JSONEncoder):
-#     def default(self, obj):
-#         if isinstance(obj, Pet):
-#             return {
-#                 'user_id': obj.user_id,
-#                 'pet_id': obj.pet_id,
-#                 'name': obj.name,
-#                 'birthdate': obj.dob.strftime('%m/%d/%Y'),
-#                 'gender': obj.gender,
-#                 'creation_timestamp': obj.creation_timestamp.strftime('%m/%d/%Y %H:%M:%S'),
-#                 'age': obj.age,
-#                 'total_clicks': obj.total_clicks
-#             }
-#         return super().default(obj)
-#
-#
-# class PetDecoder(json.JSONDecoder):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(object_hook=self._decode_pet, *args, **kwargs)
-#
-#     def _decode_pet(self, obj):
-#         if 'user_id' in obj and 'pet_id' in obj and 'name' in obj and 'birthdate' in obj and 'gender' in obj and 'creation_timestamp' in obj and 'age' in obj:
-#             # Convert birthdate and creation_timestamp back to datetime objects
-#             obj['creation_timestamp'] = datetime.fromisoformat(obj['creation_timestamp'])
-#             obj['dob'] = datetime.fromisoformat(obj['birthdate'])
-#             # Remove the temporary 'birthdate' key
-#             del obj['birthdate']
-#             # Create a new Pet object with the data from the dictionary
-#             return Pet(**obj)
-#         return obj
