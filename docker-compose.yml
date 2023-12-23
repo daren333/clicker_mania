@@ -2,8 +2,8 @@ services:
   clicker_mania:
     image: clicker_mania:latest
     build:
-      context: ./docker_app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./src/Dockerfile
     ports:
       - 3000:3306
     volumes:
