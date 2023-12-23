@@ -2,8 +2,8 @@ services:
   clicker_mania:
     image: clicker_mania:latest
     build:
-      context: ./docker_app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./src/Dockerfile
     ports:
       - 3000:3306
     volumes:
@@ -27,6 +27,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - mysql_config:/etcmysql
+      - ./src/utils/mysql_init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - MYSQL_ROOT_PASSWORD=example
 
