@@ -50,7 +50,7 @@ USER appuser
 
 # Update python paths
 ENV PATH=$CONDA_DIR/bin:$PATH
-ENV PATH=$PATH:/home/appuser
+#ENV PATH=$PATH:/home/appuser
 
 # Copy environment.yml and create conda environment without activating it
 COPY environment.yml /home/appuser
@@ -58,5 +58,8 @@ COPY src /home/appuser/src/
 
 RUN conda env create -f /home/appuser/environment.yml
 
+ENV FLASK_APP=src.app
+ENV FLASK_CONFIG=development
+
 # Set the command to run your application
-CMD ["conda", "run", "-n", "clicker_mania", "python", "/home/appuser/src/app.py"]
+CMD ["conda", "run", "-n", "clicker_mania", "flask", "run", "--host", "0.0.0.0"]

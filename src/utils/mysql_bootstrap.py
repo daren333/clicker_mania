@@ -4,21 +4,21 @@ from mysql.connector import errorcode
 from sqlalchemy import create_engine, text
 
 
-def connect_to_db():
-    try:
-        cnx = mysql.connector.connect(user=config.mysql_user,
-                                      password=config.mysql_pw,
-                                      host=config.mysql_host,
-                                      port=config.mysql_port)
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print("Something is wrong with your user name or password")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            print("Database does not exist")
-        else:
-            print(err)
-    else:
-        return cnx
+# def connect_to_db():
+#     try:
+#         cnx = mysql.connector.connect(user=config.mysql_user,
+#                                       password=config.mysql_pw,
+#                                       host=config.mysql_host,
+#                                       port=config.mysql_port)
+#     except mysql.connector.Error as err:
+#         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+#             print("Something is wrong with your user name or password")
+#         elif err.errno == errorcode.ER_BAD_DB_ERROR:
+#             print("Database does not exist")
+#         else:
+#             print(err)
+#     else:
+#         return cnx
 
 
 def init_mysql_db(engine):
@@ -57,7 +57,7 @@ def create_sql_tables(engine):
             cursor.execute(text(config.sql_table_configs[table]))
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                print("already exists.")
+                print("table {} already exists.".format(table))
             else:
                 print(err.msg)
         else:
