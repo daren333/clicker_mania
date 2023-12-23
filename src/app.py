@@ -22,7 +22,7 @@ class DefaultConfig(object):
         'host': '127.0.0.1',  # Change this to the IP of your MySQL container if needed
         'port': 3306,
         'user': 'root',
-        'password': 'mysecretpassword',  # The password you set when starting the container
+        'password': 'example',  # The password you set when starting the container
         'db': 'clicker_mania',  # Change this to your database name
     }
 
